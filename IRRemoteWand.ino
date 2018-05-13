@@ -1,6 +1,6 @@
-/* IR Remote Wand
+/* IR Remote Wand v2 - see http://www.technoblogy.com/show?25TN
 
-   David Johnson-Davies - www.technoblogy.com - 8th May 2018
+   David Johnson-Davies - www.technoblogy.com - 13th May 2018
    ATtiny85 @ 1 MHz (internal oscillator; BOD disabled)
    
    CC BY 4.0
@@ -57,18 +57,18 @@ void Send (char IRtype, unsigned int Address, unsigned int Command) {
   
   // NEC or Samsung codes
   if ((IRtype == 'N') || (IRtype == 'M')) {
-    unsigned long code = ((unsigned long)Command<<16 | Address);
+    unsigned long code = ((unsigned long) Command<<16 | Address);
     TCNT1 = 0;                            // Start counting from 0
     // Send Start pulse
     if (IRtype == 'N') Pulse(342, 171); else Pulse(190, 190);
     // Send 32 bits
-    for (int Bit=0; Bit<20; Bit++)
-      if (code & ((unsigned long) 1<<Bit)) Pulse(48, 24); else Pulse(24, 24);
+    for (int Bit=0; Bit<32; Bit++)
+      if (code & ((unsigned long) 1<<Bit)) Pulse(21, 64); else Pulse(21, 21);
     Pulse(21, 0);
   
   // Sony 12, 15, or 20 bit codes
   } else if (IRtype == 12 || IRtype == 15 || IRtype == 20) {
-    unsigned long code = ((unsigned long)Address<<7 | Command);
+    unsigned long code = ((unsigned long) Address<<7 | Command);
     TCNT1 = 0;                            // Start counting from 0
     // Send Start pulse
     Pulse(96, 24);
